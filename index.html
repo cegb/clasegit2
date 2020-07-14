@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>Covid-19 Chile</title>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            
+        $.ajax({
+            type:"GET",
+            url:"https://api.covid19api.com/dayone/country/chile/status/confirmed",
+            success: function(data) {
+                var datos = []
+                data.forEach(element => {
+                    var item = {x: new Date(element.Date), y: element.Cases};
+                    datos.push(item);
+                });
+                console.log(datos);
+
+
+
+                //$('#apiResponseContainer').text(JSON.stringify(data));
+                //$('#apiResponseContainer').text(JSON.stringify(datos));
+
+                $("#chartContainer").CanvasJSChart(
+                    {
+                    animationEnabled: true,
+                    title:{
+                        text: "Casos Registrados Totales COVID-19"
+                    },
+                    axisX: {
+                        valueFormatString: "DD MMM,YY"
+                    },
+                    axisY: {
+                        title: "Casos totales",
+                        includeZero: false,
+                        suffix: ""
+                    },
+                    legend:{
+                        cursor: "pointer",
+                        fontSize: 16,
+                        itemclick: toggleDataSeries
+                    },
+                    toolTip:{
+                        shared: true
+                    },
+                    data: [{
+                        name: "Chile",
+                        type: "splineArea",
+                        yValueFormatString: "#0.## infecciones",
+                        showInLegend: true,
+                        dataPoints: datos
+                    }]
+                });
+            },
+            dataType: 'json',
+        });
+
+
+        $('#contador').text("Valor de inicio");
+
+        var myPromise = new Promise(function(resolve, reject){
+
+            setTimeout(function(){ $('#contador').text("Valor final"),3000);
+            })
+
+        })
+        
+        
+
+
+
+        });
+
+        function toggleDataSeries(e){
+            if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            }
+            else{
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+            }
+  
+
+
+    </script>
+    </head>
+<body>
+    <div id="chartContainer" style="width:70%; height:300px;"></div>
+    <br>
+    <div id="apiResponseContainer" style="width:70%; height:300px;"></div>
+    <br>
+    <div id="contador" style="width:70%; height:300px;"></div>
+</body>
+</html>
